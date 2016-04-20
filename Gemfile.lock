@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.4.0)
+    gli (2.13.4)
+    launchy (2.4.3)
+      addressable (~> 2.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  gli
+  launchy
+
+BUNDLED WITH
+   1.11.2

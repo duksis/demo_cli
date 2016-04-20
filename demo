@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+MAX_TIME = 5 * 60 # 5 min for demo
+
+NOTES = {
+  # Problem
+  "Hiring is broken!" => 5,
+  "High demand talents are bombed with emails, linkedin messages and calls" => 5,
+  "even if they are not looking for a new challenge" => 10,
+  "Companies have to reach out to hundreds of potential candidates" => 5,
+  "most likely only getting couple responses" => 10,
+  # Solution
+  "Honeypot is here to change that" => 5,
+  "we are a reverse job platform" => 5,
+  "on Honeypot talents post their interest for a new challenge" => 5,
+  "and companies can pitch talents with challenges and opportunities they are facing" => 5,
+  "Lets look how that works...." => 120,
+  # The end
+  # normal login
+  # demo profile
+  # companies pay on hire only
+  # we charge 15%
+  "Thank you!" => 5,
+}
+
+demo_length = NOTES.values.reduce(:+)
+if demo_length > MAX_TIME
+  puts "The demo time exceeds #{MAX_TIME / 60} minutes"
+  exit 1
+end
+
+$stdin.readline.chomp # wait for ENTER to start
+
+NOTES.each do |text, time|
+  text.each_char do |char|
+    print char
+    sleep 0.15 # human typing delay :)
+  end
+  sleep time
+  print "\r"
+  print " " * text.length # clear previous text
+  print "\r"
+end
+
+puts "Q&A's"
+$stdin.readline.chomp # wait for ENTER to quit
