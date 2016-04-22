@@ -1,46 +1,81 @@
 #!/usr/bin/env ruby
 
-MAX_TIME = 5 * 60 # 5 min for demo
-
 NOTES = {
   # Problem
-  "Hiring is broken!" => 5,
-  "High demand talents are bombed with emails, linkedin messages and calls" => 5,
-  "even if they are not looking for a new challenge" => 10,
-  "Companies have to reach out to hundreds of potential candidates" => 5,
-  "most likely only getting couple responses" => 10,
+  "Hiring is broken!" => 3,
+  "High demand developers are bombed with emails, linkedin messages and calls" => 1,
+  "even if they are not looking for a new challenge" => 5,
+  "Companies have to reach out to hundreds of potential candidates" => 1,
+  "rarely getting any responses" => 5,
   # Solution
-  "Honeypot is here to change that" => 5,
-  "we are a reverse job platform" => 5,
-  "on Honeypot talents post their interest for a new challenge" => 5,
-  "and companies can pitch talents with challenges and opportunities they are facing" => 5,
-  "Lets look how that works...." => 120,
-  # The end
-  # normal login
-  # demo profile
-  # companies pay on hire only
-  # we charge 15%
-  "Thank you!" => 5,
+  "Honeypot is here to change that!" => 2,
+  "we are a reverse job platform" => 1,
+  "on Honeypot developers post their interest for a new challenge" => 1,
+  "and companies can pitch developers with challenges and opportunities they are facing." => 2,
+  "Lets look how that works...." => 120
+  # normal login, demo profile companies pay on hire only
 }
 
-demo_length = NOTES.values.reduce(:+)
-if demo_length > MAX_TIME
-  puts "The demo time exceeds #{MAX_TIME / 60} minutes"
-  exit 1
-end
+class Demo
+  MIN_IN_SEC = 60
+  MAX_TIME = 5 * MIN_IN_SEC # 5 min for demo
+  HUMAN_TYPING_DELAY = 0.1
 
-$stdin.readline.chomp # wait for ENTER to start
-
-NOTES.each do |text, time|
-  text.each_char do |char|
-    print char
-    sleep 0.15 # human typing delay :)
+  def initialize(notes)
+    @notes = notes
   end
-  sleep time
-  print "\r"
-  print " " * text.length # clear previous text
-  print "\r"
+
+  def call
+    if demo_too_long?
+      puts "The demo time exceeds #{MAX_TIME / MIN_IN_SEC} minutes"
+      exit 1
+    end
+    type notes
+    thank_you
+  end
+
+  private
+  attr_reader :notes
+
+  def demo_length
+    wait_time = notes.values.reduce(:+)
+    time_spent_typing = notes.keys.map(&:length).reduce(:+) * HUMAN_TYPING_DELAY
+    wait_time + time_spent_typing
+  end
+
+  def demo_too_long?
+    demo_length > MAX_TIME
+  end
+
+  def clear(text)
+    print "\r"
+    print " " * text.length
+    print "\r"
+  end
+
+  def type(notes)
+    notes.each do |text, time|
+      text.each_char do |char|
+        print char
+        sleep HUMAN_TYPING_DELAY
+      end
+      sleep time
+      clear text
+    end
+  end
+
+  def thank_you
+    puts "Thank you!"
+    sleep MAX_TIME - demo_length
+    close_chrome
+    puts ''
+    puts "Q&A's"
+  end
+
+  def close_chrome
+    # close any open chrome to force stop demo ¯\_(ツ)_/¯
+    system("killall -SIGQUIT -m 'Google Chrome'")
+  end
 end
 
-puts "Q&A's"
-$stdin.readline.chomp # wait for ENTER to quit
+Demo.new(NOTES).call if __FILE__ == $0
